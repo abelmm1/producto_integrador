@@ -2,114 +2,168 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Gestión de Items - Producto Integrador</title>
+  <title>Gestión de Productos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    :root {
+      --bg: #f4f4f4;
+      --card: #fff;
+      --text: #222;
+      --primary: #007bff;
+      --success: #28a745;
+      --danger: #dc3545;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #181818;
+        --card: #252525;
+        --text: #f0f0f0;
+        --primary: #3399ff;
+        --success: #40c057;
+        --danger: #ff6b6b;
+      }
+    }
+
     body {
-      font-family: 'Segoe UI', sans-serif;
       margin: 0;
-      padding: 0;
-      background: #f0f2f5;
-      color: #333;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: background 0.3s, color 0.3s;
     }
 
     header {
-      background-color: #007bff;
+      background: var(--primary);
       color: white;
-      padding: 1rem 2rem;
+      padding: 1.5rem;
       text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      font-size: 1.5rem;
+      letter-spacing: 1px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
     }
 
-    .container {
+    main {
       max-width: 800px;
       margin: 2rem auto;
-      background: white;
       padding: 2rem;
+      background: var(--card);
       border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h2 {
       margin-top: 0;
-      color: #007bff;
+      color: var(--primary);
     }
 
     form {
       display: flex;
       flex-direction: column;
+      gap: 0.8rem;
       margin-bottom: 2rem;
     }
 
-    form input, form textarea, form button {
-      margin: 0.5rem 0;
+    form input, form textarea {
       padding: 0.8rem;
-      font-size: 1rem;
-      border-radius: 6px;
+      border-radius: 8px;
       border: 1px solid #ccc;
+      background: #fff;
+      color: #000;
+      font-size: 1rem;
     }
 
     form button {
-      background-color: #28a745;
+      background: var(--success);
       color: white;
+      padding: 0.8rem;
       border: none;
+      border-radius: 8px;
+      font-weight: bold;
       cursor: pointer;
+      transition: background 0.3s ease;
     }
 
     form button:hover {
-      background-color: #218838;
+      background: #218838;
     }
 
     .item {
       background: #f8f9fa;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      padding: 1rem;
+      border-left: 6px solid var(--primary);
       margin-bottom: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .item .info {
+      max-width: 70%;
+    }
+
+    .item .info strong {
+      font-size: 1.1rem;
     }
 
     .item button {
-      background-color: #dc3545;
+      background: var(--danger);
       border: none;
       color: white;
       padding: 0.5rem 1rem;
       border-radius: 6px;
       cursor: pointer;
+      transition: background 0.3s ease;
     }
 
     .item button:hover {
-      background-color: #c82333;
+      background: #c82333;
     }
 
     @media (max-width: 600px) {
-      .container {
-        margin: 1rem;
+      main {
         padding: 1rem;
+      }
+
+      .item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+
+      .item .info {
+        max-width: 100%;
       }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Gestión de Items</h1>
+    Plataforma de Gestión Agrícola 🌱
   </header>
 
-  <div class="container">
-    <h2>Agregar nuevo item</h2>
+  <main>
+    <h2>Agregar producto</h2>
     <form id="itemForm">
-      <input type="text" id="name" placeholder="Nombre del item" required />
+      <input type="text" id="name" placeholder="Nombre del producto" required />
       <textarea id="description" placeholder="Descripción" required></textarea>
       <button type="submit">Agregar</button>
     </form>
 
-    <h2>Lista de items</h2>
+    <h2>Lista de productos</h2>
     <div id="itemsContainer"></div>
-  </div>
+  </main>
 
   <script>
-    const API_URL = 'http://localhost:3000/items';
+    const API_URL = '/items';
 
     async function fetchItems() {
       const res = await fetch(API_URL);
@@ -121,7 +175,7 @@
         const div = document.createElement('div');
         div.className = 'item';
         div.innerHTML = `
-          <div>
+          <div class="info">
             <strong>${item.name}</strong><br>
             <small>${item.description}</small>
           </div>
@@ -131,7 +185,8 @@
       });
     }
 
-    async function deleteItem(id) {      await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+    async function deleteItem(id) {
+      await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
       fetchItems();
     }
 
