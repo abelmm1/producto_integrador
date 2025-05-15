@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestión de Items - Producto Integrador</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f0f2f5;
+      color: #333;
+    }
+
+    header {
+      background-color: #007bff;
+      color: white;
+      padding: 1rem 2rem;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      margin-top: 0;
+      color: #007bff;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 2rem;
+    }
+
+    form input, form textarea, form button {
+      margin: 0.5rem 0;
+      padding: 0.8rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    form button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    form button:hover {
+      background-color: #218838;
+    }
+
+    .item {
+      background: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .item button {
+      background-color: #dc3545;
+      border: none;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .item button:hover {
+      background-color: #c82333;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 1rem;
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Gestión de Items</h1>
+  </header>
+
+  <div class="container">
+    <h2>Agregar nuevo item</h2>
+    <form id="itemForm">
+      <input type="text" id="name" placeholder="Nombre del item" required />
+      <textarea id="description" placeholder="Descripción" required></textarea>
+      <button type="submit">Agregar</button>
+    </form>
+
+    <h2>Lista de items</h2>
+    <div id="itemsContainer"></div>
+  </div>
+
+  <script>
+    const API_URL = 'http://localhost:3000/items';
+
+    async function fetchItems() {
+      const res = await fetch(API_URL);
+      const items = await res.json();
+      const container = document.getElementById('itemsContainer');
+      container.innerHTML = '';
+
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <div>
+            <strong>${item.name}</strong><br>
+            <small>${item.description}</small>
+          </div>
+          <button onclick="deleteItem(${item.id})">Eliminar</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    async function deleteItem(id) {      await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+      fetchItems();
+    }
+
+    document.getElementById('itemForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const description = document.getElementById('description').value;
+
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, description })
+      });
+
+      document.getElementById('itemForm').reset();
+      fetchItems();
+    });
+
+    fetchItems();
+  </script>
+</body>
+</html>
