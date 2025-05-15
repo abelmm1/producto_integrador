@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const cors = require('cors');
 const { Pool } = require('pg');
-const path = require('path'); // <-- nuevo para servir archivos estáticos
+const path = require('path');
 require('dotenv').config();
 
 app.use(cors());
@@ -66,6 +66,6 @@ app.delete('/items/:id', async (req, res) => {
 
 // Iniciar servidor
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);
 });
