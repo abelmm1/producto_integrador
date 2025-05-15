@@ -11,6 +11,11 @@ app.use(express.json());
 // Servir archivos estáticos desde /public
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Ruta raíz para mostrar mensaje en la home
+app.get('/', (req, res) => {
+  res.send('<h2>🚀 Plataforma de Gestión Agrícola en Railway</h2><p>Servidor activo y escuchando solicitudes.</p>');
+});
+
 // Configurar conexión a PostgreSQL en Railway
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -67,5 +72,5 @@ app.delete('/items/:id', async (req, res) => {
 // Iniciar servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
